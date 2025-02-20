@@ -1,0 +1,97 @@
+arrival <- c(12, 31, 63, 95, 99, 154, 198, 221, 304, 346, 411, 455, 537)
+service <- c(40, 32, 55, 48, 18, 50, 47, 18, 28, 54, 40, 72, 12)
+
+
+
+i = 1 #time line
+j = 1 #jth customer to depature
+
+while(i <= 550){
+  if(i >= arrival[j]){
+    print(i)
+    i = i+service[j]
+    j = j+1
+  }else{
+    i = i+1
+  }
+}
+
+service_1_backtime = 0
+service_2_backtime = 0
+
+i = 1
+j = 1
+
+while(i<=550){
+  if(service_1_backtime == i){service_1_backtime = 0}
+  if(service_2_backtime == i){service_2_backtime = 0}
+  if(service_1_backtime != 0 && service_2_backtime != 0){
+    i = i+1
+  }else{
+    if(arrival[j] <= i){
+      if(service_1_backtime == 0){
+        service_1_backtime = i + service[j]
+        print(j)
+        print(i)
+      }else{
+        service_2_backtime = i + service[j]
+        print(j)
+        print(i)
+      }
+      j = j+1
+    }
+    i = i+1
+  }
+}
+
+
+
+
+
+i = 1 #time line
+j = 1 #jth customer to depature
+
+wait = c()
+
+backtime = 0
+
+while(i <= 700){
+  #print("\n\n")
+  #print(backtime)
+  #print(wait)
+  #print("\n\n")
+  if(backtime == 0){
+    if(length(wait) == 0){
+      if(i == arrival[j]){
+        backtime = i + service[j]
+        print(j)
+        print(i)
+        j = j+1
+      }
+    }else{
+      backtime = i + service[wait[length(wait)]]
+      print(wait[length(wait)])
+      print(i)
+      wait = wait[-length(wait)]
+    }
+    i = i+1
+  }else{
+    if(i >= arrival[j]){
+      wait = append(wait, j)
+      j = j+1
+    }
+    if(i == backtime){
+      backtime = 0
+      if(length(wait) != 0){
+        backtime = i + service[wait[length(wait)]]
+        print(wait[length(wait)])
+        print(i)
+        wait = wait[-length(wait)]
+      }
+    }
+    i = i+1
+  }
+}
+
+
+
