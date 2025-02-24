@@ -8,6 +8,7 @@ j = 1 #jth customer to depature
 
 while(i <= 550){
   if(i >= arrival[j]){
+    print(j)
     print(i)
     print(i+service[j])
     i = i+service[j]
@@ -76,7 +77,7 @@ while(i <= 700){
       backtime = i + service[wait[length(wait)]]
       print(wait[length(wait)])
       print(i)
-      print(i+service[j])
+      print(i+service[wait[length(wait)]])
       wait = wait[-length(wait)]
     }
     i = i+1
@@ -91,7 +92,7 @@ while(i <= 700){
         backtime = i + service[wait[length(wait)]]
         print(wait[length(wait)])
         print(i)
-        print(i+service[j])
+        print(i+service[wait[length(wait)]])
         wait = wait[-length(wait)]
       }
     }
