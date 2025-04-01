@@ -1,0 +1,364 @@
+#chapter 4
+#1
+p1 = 1/3
+p2 = 2/3
+#a
+n = 100
+
+x = c()
+
+for(i in 1:n){
+  tmp = runif(1)
+  if(tmp<p1){
+    x = c(x, 0)
+   
+  }else if(tmp<(p1+p2)){
+    x = c(x, 1)
+    
+  }
+}
+
+
+
+print(length(x[x == 0])/100)
+print(length(x[x == 1])/100)
+print(length(x[x == 0])/100+length(x[x == 1])/100)
+
+#b
+n = 1000
+
+x = c()
+
+for(i in 1:n){
+  tmp = runif(1)
+  if(tmp<p1){
+    x = c(x, 0)
+    
+  }else if(tmp<(p1+p2)){
+    x = c(x, 1)
+    
+  }
+}
+
+
+print(length(x[x == 0])/1000)
+print(length(x[x == 1])/1000)
+print(length(x[x == 0])/1000+length(x[x == 1])/1000)
+
+#c
+n = 10000
+
+x = c()
+
+for(i in 1:n){
+  tmp = runif(1)
+  if(tmp<p1){
+    x = c(x, 0)
+    
+  }else if(tmp<(p1+p2)){
+    x = c(x, 1)
+    
+  }
+}
+
+
+print(length(x[x == 0])/10000)
+print(length(x[x == 1])/10000)
+print(length(x[x == 0])/10000+length(x[x == 1])/10000)
+
+#6
+set.seed(113225001)
+n = 25
+Bernoulli = c()
+Geometric = c()
+sum_temp = 0
+p = 0.8
+while(sum_temp < n){
+  u = runif(1)
+  x = floor(log(u)/log(p))+1
+  Geometric = c(Geometric, x)
+  Bernoulli = c(Bernoulli, rep(1, x-1), 0)
+  sum_temp = sum_temp + x
+}
+y = Bernoulli[1:25]
+print(Geometric)
+print(Bernoulli)
+print(y)
+print(mean(y))
+print(var(y))
+
+#10
+N = 100 #do N times negative binomial experiments
+x = c() #store each negative binomial experiments
+r = 10  #set r
+p = 0.8 #set p
+for(i in 1:N){
+  n = 0
+  s = 0
+  while(s<r){
+    if(runif(1)<p){
+      s = s+1
+    }
+    n = n+1
+  }
+  x[i] = n
+}
+print(mean(x)) #theorical value: 12.5 r/p
+print(var(x))  #theorical value: 3.125 r(1-p)/(p^2)
+
+#chapter 5
+#3
+x_inverse <- function(y){
+  return ((-1+sqrt(1+8*y))/2)
+}
+
+set.seed(113225001)
+
+n = 10000
+
+y = c()
+
+for(i in 1:n){
+  tmp = runif(1)
+  tmp = x_inverse(tmp)
+  y = c(y, tmp)
+}
+  
+hist(y, probability = TRUE)
+x=seq(0,1,length.out=10000)
+lines(x, x+.5)
+
+#4
+x_inverse <- function(alpha, beta, y){
+  return ((log(1-y)/(-alpha))^(1/beta))
+}
+
+set.seed(113225001)
+n = 500
+y = c()
+
+alpha = 10
+beta = 20
+
+for(i in 1:n){
+  tmp = runif(1)
+  tmp = x_inverse(alpha, beta, tmp)
+  y = c(y, tmp)
+}
+
+hist(y, probability = TRUE, breaks = "FD")
+x = seq(0, 100, length.out = 10000)
+lines(x, exp(-alpha*(x^beta))*alpha*beta*(x^(beta-1)))
+
+#part II
+#ecdf() is a good function to draw ecdf
+#1
+x_inverse <- function(y){
+  return (y^(1/3))
+}
+
+set.seed(113225001)
+n = 500
+y = c()
+for(i in 1:n){
+  tmp = runif(1)
+  tmp = x_inverse(tmp)
+  y = c(y, tmp)
+}
+#a
+hist(y, probability = TRUE, breaks = "FD")
+x = seq(0, 1, length.out = 100000)
+lines(x, 3*(x^2))
+#b
+mean(y) #theorical value: 3/4
+var(y) #theorical value: 3/80
+
+#comment: mean and variance is close to theorical result
+
+#2
+#a
+x_inverse <- function(y){
+  return (6*tan(pi*(y-.5))-3)
+}
+
+set.seed(113225001)
+
+n = 500
+
+y = c()
+
+for(i in 1:n){
+  tmp = runif(1)
+  tmp = x_inverse(tmp)
+  y = c(y, tmp)
+}
+#a
+hist(y, probability = TRUE, breaks = "FD", xlim = c(-50, 50), main = "Histogram of Random Variates from Cauchy(-3, 6)")
+x = seq(-50, 50, length.out = 1000000)
+lines(x, 1/((pi*6)*(1+((x+3)/6)^2)))
+
+#b
+mean(y) #no theorical define
+var(y) #large value, no theorical define
+median(y) #theorical value: -3
+
+#c
+#comments: 
+
+
+#3
+#inverse transform function
+
+bin_inverse <- function(size, p){ #sub function
+  n_ = size
+  m = 0
+  x = c()
+  while(TRUE){
+    u = runif(1)
+    N = floor(log(u)/log(1-p))+1
+    tmp = N
+    if(N >= n_){
+      len = length(x)
+      
+      while(len<size){
+        x = c(x, 0)
+        len = len+1
+      }
+      break
+    }
+    while(tmp>1){
+      x = c(x, 0)
+      tmp = tmp-1
+    }
+    x = c(x, 1)
+    n_ = n_ - N
+    m = m + N
+  }
+  
+  return (x)
+}
+
+
+bin_main_inverse <- function(n, size, p){ #main function
+  x = c()
+  for(i in 1:n){
+    tmp = bin_inverse(size, p)
+    x = c(x, sum(tmp))
+  }
+  return (x)
+}
+
+#i
+#r package
+x = rbinom(30, 10, 0.1)
+#algorithm of inverse transform method
+
+x_i = bin_main_inverse(30, 10, 0.1)
+
+hist(x_i, probability = TRUE, breaks = 5)
+t = seq(0, 3, 1)
+lines(t, choose(10, t)*0.1^t*0.9^(10-t))
+
+mean(x)
+mean(x_i)
+var(x)
+var(x_i)
+
+
+
+
+#ii
+#r package
+x = rbinom(30, 30, 0.5)
+#algorithm of inverse transform method
+
+x_ii = bin_main_inverse(30, 30, 0.5)
+
+hist(x_ii, probability = TRUE, length.out = "FD")
+t = seq(8, 1600, 1)
+lines(t, choose(30, t)*0.5^t*0.5^(30-t))
+
+mean(x)
+mean(x_ii)
+var(x)
+var(x_ii)
+
+#iii
+#inverse transform function
+
+poi_inverse <- function(lambda){ #sub function
+  i = 0
+  p = exp(-lambda)
+  f = p
+  x = 0
+  u = runif(1)
+  while(TRUE){
+    if(u < f){
+      x = i
+      break
+    }
+    p = lambda*p/(i+1)
+    f = f+p
+    i = i+1
+  }
+  return (x)
+}
+
+poi_main_inverse <- function(size, lambda){ #main function
+  x = c()
+  for(i in 1:size){
+    tmp = poi_inverse(lambda)
+    x = c(x, tmp)
+  }
+  return (x)
+}
+#r package
+x = rpois(30, 9.5)
+#algorithm of inverse transform method
+
+x_iii = poi_main_inverse(30, 9.5)
+
+hist(x_iii, probability = TRUE, length.out = "FD")
+t = seq(0, 25, 1)
+lines(t, exp(-9.5)*(9.5^t)/factorial(t))
+
+mean(x)
+mean(x_iii)
+var(x)
+var(x_iii)
+
+#iiii
+#inverse transform function
+geom_inverse <- function(p){ #sub function
+  u = runif(1)
+  return (floor(log(u)/log(1-p))+1)
+}
+
+geom_main_inverse <- function(size, p){ #main function
+  x = c()
+  for(i in 1:size){
+    tmp = geom_inverse(p)
+    x = c(x, tmp)
+  }
+  return (x)
+}
+
+#r package
+x = rgeom(30, 0.2) #number of failures, so +1 is necessary
+x = x+1
+
+#algorithm of inverse transform method
+x_iiii = geom_main_inverse(30, 0.2) #number of total experiments
+
+
+hist(x_iiii, probability = TRUE, length.out = "FD")
+t = seq(1, 12, 1)
+lines(t, 0.4*0.6^(t-1))
+
+mean(x)
+var(x)
+mean(x_iiii)
+var(x_iiii)
+
+#c
+#comments: 
