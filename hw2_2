@@ -1,0 +1,109 @@
+#1, same result
+n=100
+set.seed(113225001)
+x = runif(n, 0, 1)
+print.default(x, 3)
+mean(x)
+var(x)
+
+n=100
+set.seed(113225001)
+x = runif(n, 0, 1)
+print.default(x, 3)
+mean(x)
+var(x)
+
+n=100
+set.seed(113225001)
+x = runif(n, 0, 1)
+print.default(x, 3)
+mean(x)
+var(x)
+
+#2, different from #1 but still have same result between 3 tries
+n = 100
+set.seed(0)
+x = runif(n, 0, 1)
+print.default(x, 3)
+mean(x)
+var(x)
+
+n = 100
+set.seed(0)
+x = runif(n, 0, 1)
+print.default(x, 3)
+mean(x)
+var(x)
+
+n = 100
+set.seed(0)
+x = runif(n, 0, 1)
+print.default(x, 3)
+mean(x)
+var(x)
+
+#3, not have same result
+n = 100
+x = runif(n, 0, 1)
+print.default(x, 3)
+mean(x)
+var(x)
+
+n = 100
+x = runif(n, 0, 1)
+print.default(x, 3)
+mean(x)
+var(x)
+
+n = 100
+x = runif(n, 0, 1)
+print.default(x, 3)
+mean(x)
+var(x)
+
+#5
+#a
+a = 3
+m = 256
+x = c()
+y = c()
+
+x_tmp = 21
+
+x = c(x, x_tmp)
+
+for(i in 1:256){
+  if(i == 256){
+    x_tmp = (a*x_tmp)%%m
+    y = c(y, x_tmp)
+    break
+  }
+  x_tmp = (a*x_tmp)%%m
+  y = c(y, x_tmp)
+  x = c(x, x_tmp)
+}
+
+plot(x, y, xlab = "x", ylab = "y", main = "scatter plot: (x, y)", col = "blue", pch = 16)
+
+#b
+a = 7^5
+m = 2^31-1
+x = c()
+y = c()
+
+x_tmp = 21
+
+x = c(x, x_tmp)
+
+for(i in 1:256){
+  if(i == 256){
+    x_tmp = (a*x_tmp)%%m
+    y = c(y, x_tmp)
+    break
+  }
+  x_tmp = (a*x_tmp)%%m
+  y = c(y, x_tmp)
+  x = c(x, x_tmp)
+}
+
+plot(x, y, xlab = "x", ylab = "y", main = "scatter plot: (x, y)", col = "blue", pch = 16)
