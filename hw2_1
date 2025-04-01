@@ -1,0 +1,114 @@
+#4
+set.seed(113225001)
+n = 1000
+x = runif(n)
+g_x = (1-x^2)^(3/2)
+
+print(mean(g_x))
+print(3/16*pi)
+
+#5
+set.seed(113225001)
+n = 1000
+x = runif(n)
+h_x = exp((4*x-2)+(4*x-2)^2)*4
+
+print(mean(h_x))
+
+#7
+set.seed(113225001)
+n = 1000
+x = runif(n)
+h_x = 2*exp(-(1/x-1)^2)*(1/(x^2))
+
+print(mean(h_x))
+print(sqrt(pi))
+
+#9
+set.seed(113225001)
+n = 1000
+v = runif(n)
+u = runif(n)
+h_x = exp(-(1/v-1+u*(1/v-1)))*(1/v^3-1/v^2)
+print(mean(h_x))
+
+#10
+set.seed(113225001)
+n = 1000
+
+u = runif(n)
+u_exp = exp(u)
+
+print(mean(u*u_exp)-mean(u)*mean(u_exp))
+print(1/2*(3-exp(1)))
+
+#12
+#a
+set.seed(113225001)
+n = 100
+
+N = c()
+
+for(i in 1:n){
+  sum_tmp = runif(1)
+  cnt = 1
+  while(sum_tmp < 1){
+    sum_tmp = sum_tmp + runif(1)
+    cnt = cnt+1
+  }
+  N = c(N, cnt)
+}
+print(N)
+print(mean(N))
+#b
+set.seed(113225001)
+n = 1000
+
+N = c()
+
+for(i in 1:n){
+  sum_tmp = runif(1)
+  cnt = 1
+  while(sum_tmp < 1){
+    sum_tmp = sum_tmp + runif(1)
+    cnt = cnt+1
+  }
+  N = c(N, cnt)
+}
+print(N)
+print(mean(N))
+
+#c
+set.seed(113225001)
+n = 10000
+
+N = c()
+
+for(i in 1:n){
+  sum_tmp = runif(1)
+  cnt = 1
+  while(sum_tmp < 1){
+    sum_tmp = sum_tmp + runif(1)
+    cnt = cnt+1
+  }
+  N = c(N, cnt)
+}
+print(N)
+print(mean(N))
+
+#d
+#exponential?
+
+#14
+x1 = 23
+x2 = 66
+x_seq = c(x1, x2)
+u_seq = c(x1/100, x2/100)
+
+for(i in 1:12){
+  tmp = (x_seq[i]*5 + x_seq[i+1]*3)%%100
+  u_seq = c(u_seq, tmp/100)
+  x_seq = c(x_seq, tmp)
+}
+print(u_seq)
+print(x_seq)
