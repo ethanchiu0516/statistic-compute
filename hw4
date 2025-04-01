@@ -1,0 +1,141 @@
+#1
+#gamma
+n = 500
+set.seed(113225001)
+x = rgamma(500, 4/3, 6)
+
+hist(x, probability = TRUE, ylim = c(0, 4))
+t = seq(0, 50, 0.001)
+
+lines(t, dgamma(t, 4/3, 6), col = "blue")
+
+legend("topright", c("simulated data", "density function"), fill = c("gray", NA), col = c(NA, "blue"), lty = c(NA, 1), border = NA)
+
+
+print(mean(x)) #theorical value: 0.222...
+print(var(x))  #theorical value: 0.03703704
+
+#chi
+set.seed(113225001)
+x = rchisq(500, df = 25)
+
+hist(x, probability = TRUE, ylim = c(0, 0.07))
+t = seq(0, 50, 0.001)
+
+lines(t, dchisq(t, 25), col = "blue")
+
+legend("topright", c("simulated data", "density function"), fill = c("gray", NA), col = c(NA, "blue"), lty = c(NA, 1), border = NA)
+
+print(mean(x)) #theorical value: 25
+print(var(x))  #theorical value: 50
+
+#beta
+set.seed(113225001)
+x = rbeta(500, 2, 1/2)
+
+hist(x, probability = TRUE)
+
+t = seq(0, 1, 0.001)
+
+lines(t, dbeta(t, 2, 1/2), col = "blue")
+
+legend("topleft", c("simulated data", "density function"), fill = c("gray", NA), col = c(NA, "blue"), lty = c(NA, 1), border = NA)
+
+
+print(mean(x)) #theorical value: 0.8
+print(var(x))  #theorical value: 0.04571429
+
+#normal
+set.seed(113225001)
+x = rnorm(500, -3, 6)
+
+hist(x, probability = TRUE, ylim = c(0, 0.08))
+
+t = seq(-100, 100, 0.01)
+
+lines(t, dnorm(t, -3, 6), col = "blue")
+
+legend("topright", c("simulated data", "density function"), fill = c("gray", NA), col = c(NA, "blue"), lty = c(NA, 1), border = NA)
+
+
+print(mean(x)) #theorical value: -3
+print(var(x))  #theorical value: 36
+
+#t
+set.seed(113225001)
+x = rt(500, 10)
+x = x*sqrt(6)-3
+
+hist(x, probability = TRUE)
+
+t = seq(-15, 15, 0.01)
+lines(t, dt((t+3)/sqrt(6), 10)/sqrt(6), col = "blue")
+
+legend("topright", c("simulated data", "density function"), fill = c("gray", NA), col = c(NA, "blue"), lty = c(NA, 1), border = NA)
+
+print(mean(x)) #theorical value: -3
+print(var(x))  #theorical value: 7.5
+
+#cauchy
+set.seed(113225001)
+x = rcauchy(500, -3, 6)
+
+hist(x, probability = TRUE)
+
+t = seq(-1100, 400, 0.01)
+lines(t, dcauchy(t, -3, 6), col = "blue")
+
+legend("topleft", c("simulated data", "density function"), fill = c("gray", NA), col = c(NA, "blue"), lty = c(NA, 1), border = NA)
+
+print(mean(x)) #theorical value: not define
+print(var(x))  #theorical value: not define
+print(median(x)) #theorical value: -3
+
+#comments
+
+#2
+#rejection method
+alpha = 1/2
+lambda = 1/2
+beta = 2
+
+n = 500
+x = c()
+
+for(i in 1:n){
+  while (TRUE){
+    y = -2*log(1-runif(1)^(1/alpha))
+    u = runif(1)
+    if(u <= (y^(alpha-1)*exp(-y/2))/(2^(alpha-1)*(1-exp(-y/2))^(alpha-1))){ #generalized exponential distribution method
+      x = c(x, y)
+      break
+    }
+  }
+}
+
+print(length(x))
+x = x*beta
+hist(x, probability = TRUE)
+print(mean(x))
+print(var(x))
+t = seq(0, 30, 0.001)
+lines(t, dchisq(t, 1), lwd = 3, col = "red")
+hist(rchisq(500, 1), probability = TRUE, add = T, col = rgb( 0, 0, 1, .6))
+
+legend("topright", c("rejection method", "simulation by R package", "density function"), fill = c("gray", rgb( 0, 0, 1, .6), NA), col = c(NA, NA, "red"), lty = c(NA, NA, 1), border = NA)
+
+#normal transformation method
+x_norm = rnorm(500)
+x = x_norm^2
+
+print(mean(x))
+print(var(x))
+hist(x, probability = TRUE, breaks = 15)
+
+t = seq(0, 30, 0.001)
+lines(t, dchisq(t, 1), lwd = 3, col = "red")
+
+hist(rchisq(500, 1), probability = TRUE, add = T, col = rgb(0, 0, 1, .5))
+
+legend("topright", c("rejection method", "simulation by R package", "density function"), fill = c("gray", rgb( 0, 0, 1, .6), NA), col = c(NA, NA, "red"), lty = c(NA, NA, 1), border = NA)
+
