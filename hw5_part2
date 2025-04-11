@@ -1,0 +1,120 @@
+#1
+#100 sample size
+#convolution
+x1 = rgamma(100, 2, 2)
+x2 = rgamma(100, 2, 4)
+x = 0.5*x1 + 0.5*x2
+
+hist(x, probability = TRUE, breaks = 10, ylim = c(0, 1.5), main = "convolution method (sample size: 100)")
+t = seq(0, 2.5, 0.001)
+lines(t, 0.5*dgamma(t, 2, 2) + 0.5*dgamma(t, 2, 4), lwd = 2)
+lines(t, dgamma(t, 2, 2), lwd = 2, col = "blue")
+lines(t, dgamma(t, 2, 4), lwd = 2, col = "red")
+
+legend("topright", c("gamma(2, 2)", "gamma(2, 4)"), col = c("blue", "red"), lty = c(1, 1))
+
+
+#mixture
+x = c()
+for(i in 1:100){
+  u = runif(1)
+  if(u < .5){
+    x = c(x, rgamma(1, 2, 2))
+  }else{
+    x = c(x, rgamma(1, 2, 4))
+  }
+}
+hist(x, probability = TRUE, ylim = c(0, 1.5), breaks = 10, main = "mixture method (sample size: 100)")
+t = seq(0, 2.5, 0.001)
+lines(t, 0.5*dgamma(t, 2, 2) + 0.5*dgamma(t, 2, 4), lwd = 2)
+lines(t, dgamma(t, 2, 2), lwd = 2, col = "blue")
+lines(t, dgamma(t, 2, 4), lwd = 2, col = "red")
+
+legend("topright", c("mixture method", "gamma(2, 2)", "gamma(2, 4)"), col = c("black", "blue", "red"), lty = c(1, 1, 1))
+
+#10000 sample size
+#convolution
+x1 = rgamma(10000, 2, 2)
+x2 = rgamma(10000, 2, 4)
+x = 0.5*x1 + 0.5*x2
+
+hist(x, probability = TRUE, breaks = 100, main = "convolution method (sample size: 10000)", ylim = c(0, 1.5))
+t = seq(0, 2.5, 0.001)
+lines(t, 0.5*dgamma(t, 2, 2) + 0.5*dgamma(t, 2, 4), lwd = 2)
+lines(t, dgamma(t, 2, 2), lwd = 2, col = "blue")
+lines(t, dgamma(t, 2, 4), lwd = 2, col = "red")
+
+legend("topright", c("gamma(2, 2)", "gamma(2, 4)"), col = c("blue", "red"), lty = c(1, 1))
+
+
+
+#mixture
+x = c()
+for(i in 1:10000){
+  u = runif(1)
+  if(u < .5){
+    x = c(x, rgamma(1, 2, 2))
+  }else{
+    x = c(x, rgamma(1, 2, 4))
+  }
+}
+hist(x, probability = TRUE, ylim = c(0, 1.5), breaks = 100, main = "mixture method (sample size: 10000)")
+t = seq(0, 2.5, 0.001)
+lines(t, 0.5*dgamma(t, 2, 2) + 0.5*dgamma(t, 2, 4), lwd = 2)
+lines(t, dgamma(t, 2, 2), lwd = 2, col = "blue")
+lines(t, dgamma(t, 2, 4), lwd = 2, col = "red")
+
+legend("topright", c("mixture method", "gamma(2, 2)", "gamma(2, 4)"), col = c("black", "blue", "red"), lty = c(1, 1, 1))
+
+#2
+x = c()
+for(i in 1:500){
+  lambda = rgamma(1, 5, rate = 1/9)
+  x = c(x, rpois(1, lambda))
+}
+hist(x, probability = TRUE, breaks = 50)
+rpackage = rnbinom(500, 5, 0.1)
+hist(rpackage, breaks = 50, col = rgb(0, 0, 1, .5), add = T, probability = TRUE)
+
+legend("topright", c("composition method", "r package"), fill = c("gray", rgb(0, 0, 1, .5)))
+print(mean(x))
+print(mean(rpackage))
+print(var(x))
+print(var(rpackage))
+#theorical value mean: 45
+#theorical value variance: 450
+
+#3
+set.seed(113225001)
+x = c()
+for(i in 1:500){
+  z = 1/rgamma(1, .5, .5)
+  x_temp = z^.5*rnorm(1)
+  x = c(x, sqrt(6)*x_temp-3)
+}
+
+hist(x, probability = TRUE, breaks = "FD", xlim = c(-30, 30))
+print(mean(x))
+print(var(x))
+print(median(x))
+
+#inverse transform method
+set.seed(113225001)
+x_inverse <- function(y){
+  return (sqrt(6)*tan(pi*(y-.5))-3)
+}
+
+n = 500
+
+y = c()
+
+for(i in 1:n){
+  tmp = runif(1)
+  tmp = x_inverse(tmp)
+  y = c(y, tmp)
+}
+#a
+hist(y, probability = TRUE, breaks = "FD", add = T, col = rgb(0, 0, 1, .5))
+x = seq(-50, 50, length.out = 1000000)
+lines(x, 1/((pi*sqrt(6))*(1+((x+3)/sqrt(6))^2)))
+legend("topright", c("composition method", "inverse transform method", "Cauchy distribution density function"), pch = c(15, 15, NA), col = c("gray", rgb(0, 0, 1, .5), "black"), lty = c(NA, NA, 1))
