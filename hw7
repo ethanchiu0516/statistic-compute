@@ -1,0 +1,306 @@
+#7
+x <- c(10, 11, 10.5, 11.5, 14, 8, 13, 6, 15, 10, 11.5, 10.5, 12, 8, 16, 5)
+
+print((sqrt(var(x))/0.1)^2-16)
+
+#answer is 891
+
+#8
+#a
+x <- c()
+for(i in 1:1000){
+  tmp = 0
+  cnt = 0
+  while(tmp <= 1){
+    u = runif(1)
+    tmp = tmp+u
+    cnt = cnt+1
+  }
+  x = c(x, cnt)
+}
+print(mean(x))
+#b
+#variance
+print(var(x))
+
+#CI
+lower = mean(x)-1.96*sd(x)/sqrt(1000)
+upper = mean(x)+1.96*sd(x)/sqrt(1000)
+
+print(c(lower, upper))
+
+#part II
+#a
+#n = 10
+n = 10
+
+N = 0
+M = 0
+for(i in 1:5000){
+  tmp = rnorm(n, 1, 5)
+  if(mean(tmp)-1.96*5/sqrt(n) <= 1 && mean(tmp)+1.96*5/sqrt(n) >= 1){
+    M = M+1
+  }
+  N = N+1
+}
+
+print(M/N)
+
+#n = 20
+n = 20
+
+N = 0
+M = 0
+for(i in 1:5000){
+  tmp = rnorm(n, 1, 5)
+  if(mean(tmp)-1.96*5/sqrt(n) <= 1 && mean(tmp)+1.96*5/sqrt(n) >= 1){
+    M = M+1
+  }
+  N = N+1
+}
+
+print(M/N)
+#n = 30
+n = 30
+
+N = 0
+M = 0
+for(i in 1:5000){
+  tmp = rnorm(n, 1, 5)
+  if(mean(tmp)-1.96*5/sqrt(n) <= 1 && mean(tmp)+1.96*5/sqrt(n) >= 1){
+    M = M+1
+  }
+  N = N+1
+}
+
+print(M/N)
+#n = 100
+n = 100
+
+N = 0
+M = 0
+for(i in 1:5000){
+  tmp = rnorm(n, 1, 5)
+  if(mean(tmp)-1.96*5/sqrt(n) <= 1 && mean(tmp)+1.96*5/sqrt(n) >= 1){
+    M = M+1
+  }
+  N = N+1
+}
+
+print(M/N)
+
+#b
+#n = 10
+n = 10
+
+N = 0
+M = 0
+for(i in 1:5000){
+  tmp = rnorm(n, 1, 5)
+  if(mean(tmp)+qt(.025, n-1)*sqrt(var(tmp))/sqrt(n) <= 1 && mean(tmp)-qt(.025, n-1)*sqrt(var(tmp))/sqrt(n) >= 1){
+    M = M+1
+  }
+  N = N+1
+}
+
+print(M/N)
+
+#n = 20
+n = 20
+
+N = 0
+M = 0
+for(i in 1:5000){
+  tmp = rnorm(n, 1, 5)
+  if(mean(tmp)+qt(.025, n-1)*sqrt(var(tmp))/sqrt(n) <= 1 && mean(tmp)-qt(.025, n-1)*sqrt(var(tmp))/sqrt(n) >= 1){
+    M = M+1
+  }
+  N = N+1
+}
+
+print(M/N)
+
+#n = 30
+n = 30
+
+N = 0
+M = 0
+for(i in 1:5000){
+  tmp = rnorm(n, 1, 5)
+  if(mean(tmp)+qt(.025, n-1)*sqrt(var(tmp))/sqrt(n) <= 1 && mean(tmp)-qt(.025, n-1)*sqrt(var(tmp))/sqrt(n) >= 1){
+    M = M+1
+  }
+  N = N+1
+}
+
+print(M/N)
+#n = 100
+n = 100
+
+N = 0
+M = 0
+for(i in 1:5000){
+  tmp = rnorm(n, 1, 5)
+  if(mean(tmp)+qt(.025, n-1)*sqrt(var(tmp))/sqrt(n) <= 1 && mean(tmp)-qt(.025, n-1)*sqrt(var(tmp))/sqrt(n) >= 1){
+    M = M+1
+  }
+  N = N+1
+}
+
+print(M/N)
+
+#c
+#n = 10
+n = 10
+
+N = 0
+M = 0
+
+for(i in 1:5000){
+  tmp = rnorm(n, 1, 5)
+  if(mean(tmp)-1.96*sqrt(var(tmp))/sqrt(n) <= 1 && mean(tmp)+1.96*sqrt(var(tmp))/sqrt(n) >= 1){
+    M = M+1
+  }
+  N = N+1
+}
+print(M/N)
+
+#n = 20
+n = 20
+
+N = 0
+M = 0
+
+for(i in 1:5000){
+  tmp = rnorm(n, 1, 5)
+  if(mean(tmp)-1.96*sqrt(var(tmp))/sqrt(n) <= 1 && mean(tmp)+1.96*sqrt(var(tmp))/sqrt(n) >= 1){
+    M = M+1
+  }
+  N = N+1
+}
+print(M/N)
+#n = 30
+n = 30
+
+N = 0
+M = 0
+
+for(i in 1:5000){
+  tmp = rnorm(n, 1, 5)
+  if(mean(tmp)-1.96*sqrt(var(tmp))/sqrt(n) <= 1 && mean(tmp)+1.96*sqrt(var(tmp))/sqrt(n) >= 1){
+    M = M+1
+  }
+  N = N+1
+}
+print(M/N)
+#n = 100
+n = 100
+
+N = 0
+M = 0
+
+for(i in 1:5000){
+  tmp = rnorm(n, 1, 5)
+  if(mean(tmp)-1.96*sqrt(var(tmp))/sqrt(n) <= 1 && mean(tmp)+1.96*sqrt(var(tmp))/sqrt(n) >= 1){
+    M = M+1
+  }
+  N = N+1
+}
+print(M/N)
+
+#d, comment
+
+
+#2
+theta = 1
+sigma = 5
+n = 30
+x = rnorm(n, theta, sigma)
+x_bar = mean(x)
+x_var = var(x)
+I = c(x_bar-1.96*sqrt(x_var)/sqrt(n), x_bar+1.96*sqrt(x_var)/sqrt(n))
+
+while(I[2]-I[1]>=1){
+  tmp = rnorm(1, theta, sigma)
+  x_var = (1-1/n)*x_var + (1/(n+1))*(tmp-x_bar)^2
+  x_bar = x_bar + 1/(n+1)*(tmp-x_bar)
+  I = c(x_bar-1.96*sqrt(x_var)/sqrt(n), x_bar+1.96*sqrt(x_var)/sqrt(n))
+  n = n+1
+}
+print(n)
+
+#3
+par(mfrow = c(2, 2))
+#n = 10
+
+m = 10000
+n = 10
+x = c()
+for(i in 1:m){
+  tmp = rbinom(n, 25, .75)
+  x = c(x, mean(tmp))
+}
+
+cent = sqrt(n)*(x-18.75)/(25*.75*.25)
+cat("mean of x: ", mean(x), "\n\n")
+cat("variance of x: ", var(x), "\n\n")
+hist(cent, probability = TRUE, main = "histogram of sqrt(n=10)(x_bar-miu)/sigma")
+
+#n = 30
+m = 10000
+n = 30
+x = c()
+for(i in 1:m){
+  tmp = rbinom(n, 25, .75)
+  x = c(x, mean(tmp))
+}
+
+cent = sqrt(n)*(x-18.75)/(25*.75*.25)
+cat("mean of x: ", mean(x), "\n\n")
+cat("variance of x: ", var(x), "\n\n")
+hist(cent, probability = TRUE, main = "histogram of sqrt(n=30)(x_bar-miu)/sigma")
+#n = 100
+m = 10000
+n = 100
+x = c()
+for(i in 1:m){
+  tmp = rbinom(n, 25, .75)
+  x = c(x, mean(tmp))
+}
+
+cent = sqrt(n)*(x-18.75)/(25*.75*.25)
+cat("mean of x: ", mean(x), "\n\n")
+cat("variance of x: ", var(x), "\n\n")
+hist(cent, probability = TRUE, main = "histogram of sqrt(n=100)(x_bar-miu)/sigma")
+#n = 500
+m = 10000
+n = 500
+x = c()
+for(i in 1:m){
+  tmp = rbinom(n, 25, .75)
+  x = c(x, mean(tmp))
+}
+
+cent = sqrt(n)*(x-18.75)/(25*.75*.25)
+cat("mean of x: ", mean(x), "\n\n")
+cat("variance of x: ", var(x), "\n\n")
+hist(cent, probability = TRUE, main = "histogram of sqrt(n=500)(x_bar-miu)/sigma")
+#4
+set.seed(113225001)
+n = 20
+alpha = .05
+m = 1000
+true_variance = 4
+lower_quantile = qchisq(1-alpha/2, df = n-1)
+upper_quantile = qchisq(alpha/2, df = n-1)
+cnt = 0
+
+for(i in 1:m){
+  x = rchisq(n, df = 2)
+  tmp = var(x)
+  lower = (n-1)*tmp/lower_quantile
+  upper = (n-1)*tmp/upper_quantile
+  if(lower <= true_variance && true_variance <= upper){cnt = cnt+1}
+}
+print(cnt/m)
+
