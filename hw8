@@ -1,0 +1,179 @@
+#13
+#a
+
+#b
+set.seed(113225001)
+X <- c(56, 101, 78, 67, 93, 87, 64, 72, 80, 69)
+n <- length(X)
+B <- 10000
+X_bar <- mean(X)
+
+boot_stat <- numeric(B)
+for(i in 1:B){
+  X_tmp <- sample(X, size = n, replace = TRUE)
+  x_bar_tmp <- mean(X_tmp)
+  boot_stat[i] <- x_bar_tmp - X_bar
+}
+
+p <- mean(boot_stat > -5 & boot_stat < 5)
+print(p)
+
+#14
+set.seed(113225001)
+x <- c(1, 3)
+n = length(x)
+B <- 10000
+
+variance <- numeric(B)
+
+for(i in 1:B){
+  x_tmp <- sample(x, size = n, replace = TRUE)
+  x_bar <- mean(x_tmp)
+  variance[i] <- sum((x_tmp-x_bar)^2)/(n-1)
+}
+
+print(var(variance))
+
+#15
+set.seed(113225001)
+x <- c(5, 4, 9, 6, 21, 17, 11, 20, 7, 10, 21, 15, 13, 16, 8)
+n = length(x)
+B <- 10000
+
+variance <- numeric(B)
+
+for(i in 1:B){
+  x_tmp <- sample(x, size = n, replace = TRUE)
+  x_bar <- mean(x_tmp)
+  variance[i] <- sum((x_tmp-x_bar)^2)/(n-1)
+}
+
+print(var(variance))
+#part II
+#1
+#a
+set.seed(113225001)
+x = rcauchy(31, 5, 3)
+
+cat("sample median of miu based on the simulated data is:", median(x))
+
+#b
+#MSE
+set.seed(113225001)
+theta_head <- median(x)
+
+x_b = c()
+
+n = 31
+for(i in 1:2000){
+  tmp = rcauchy(n, theta_head, 3)
+  tmp_median = median(tmp)
+  x_b = c(x_b, tmp_median)
+}
+
+cat("estimate the MSE of the sample median:", sum((x_b-theta_head)^2)/2000)
+
+#CI
+se = sqrt(sum((x_b-theta_head)^2)/1999)
+CI = c(theta_head+qnorm(0.025)*se, theta_head-qnorm(0.025)*se)
+cat("approximate 95% CI of miu:", CI)
+
+#2
+#d
+set.seed(113225001)
+n = 20
+theta = 1/10
+x = rexp(n, theta)
+theta_MLE = 1/mean(x)
+
+#CI for theta by the asymptotic normality of the MLE
+cat("95% CI for theta by asymptotic normality of MLE is:", c(theta_MLE+qnorm(0.025)*theta_MLE/sqrt(n), theta_MLE-qnorm(0.025)*theta_MLE/sqrt(n)))
+
+
+
+#CI for the survival function
+t = c(5, 10, 15, 20, 50)
+S_t <- function(t, theta){
+  return (exp(-theta*t))
+}
+for(i in 1:5){
+  S_t_head = S_t(t[i], theta_MLE)
+  cat("95% CI for the survival function at t =", t[i], ":", c(S_t_head+qnorm(0.025)*t[i]*S_t_head*theta_MLE/sqrt(n), S_t_head-qnorm(0.025)*t[i]*S_t_head*theta_MLE/sqrt(n)), "\n")
+}
+
+#e
+store_S_t = c()
+store_CI_upper = c()
+store_CI_lower = c()
+t = seq(0, 70, 0.01)
+for(i in 1:length(t)){
+  tmp = S_t(t[i], theta_MLE)
+  store_S_t = c(store_S_t, S_t(t[i], theta_MLE))
+  store_CI_upper = c(store_CI_upper, tmp-qnorm(0.025)*t[i]*tmp*theta_MLE/sqrt(n))
+  store_CI_lower = c(store_CI_lower, tmp+qnorm(0.025)*t[i]*tmp*theta_MLE/sqrt(n))
+}
+plot(t, store_S_t, main = "survival function 95% CI", pch = 16, ylab = "S_t", xlab = "t")
+lines(t, store_CI_upper, lwd = 3, col = "red")
+lines(t, store_CI_lower, lwd = 3, col = "blue")
+
+#f
+#percentile bootstrap CI
+set.seed(113225001)
+percentile_bootstrap_sample <- c()
+for(i in 1:2000){
+  tmp = sample(x, size = n, replace = TRUE)
+  percentile_bootstrap_sample = c(percentile_bootstrap_sample, 1/mean(tmp))
+}
+percentile_CI = quantile(percentile_bootstrap_sample, c(0.025, 0.975))
+
+cat("percentile bootstrap CI for theta is:", percentile_CI)
+
+#bias-corrected bootstrap CI
+set.seed(113225001)
+q = mean(percentile_bootstrap_sample<theta_MLE)
+print(q)
+lower = floor(2000*pnorm(2*qnorm(q)+qnorm(0.025)))
+upper = floor(2000*pnorm(2*qnorm(q)+qnorm(0.975)))
+bias_corrected_CI = c(sort(percentile_bootstrap_sample)[lower], sort(percentile_bootstrap_sample)[upper])
+cat("bias-corrected CI for theta is:", bias_corrected_CI)
+
+#g
+#percentile bootstrap CI
+set.seed(113225001)
+t = c(5, 10, 15, 20, 50)
+percentile_bootstrap_sample <- c()
+for(i in 1:2000){
+  tmp = sample(x, size = n, replace = TRUE)
+  percentile_bootstrap_sample = c(percentile_bootstrap_sample, 1/mean(tmp))
+}
+bootstrap_s <- sapply(t, function(t) exp(-percentile_bootstrap_sample*t))
+percentile_CI <- apply(bootstrap_s, 2, function(v) quantile(v, c(0.025, 0.975)))
+
+cat("percentile bootstrap CI for survival function is:")
+print(percentile_CI)
+
+#bias-corrected bootstrap
+set.seed(113225001)
+bias_corrected_CI <- matrix(NA, nrow = 2, ncol = length(t))
+S_head <- exp(-theta_MLE*t)
+for(i in seq_along(t)){
+  S_tmp = bootstrap_s[, i]
+  q = mean(S_tmp<S_head[i])
+  print(q)
+  l = 2000*pnorm(2*qnorm(q)+qnorm(0.025))
+  u = 2000*pnorm(2*qnorm(q)+qnorm(0.975))
+  print(u)
+  bias_corrected_CI[1, i] = sort(S_tmp)[max(1, floor(l))]
+  bias_corrected_CI[2, i] = sort(S_tmp)[floor(u)]
+}
+
+cat("bias-corrected CI for survival function is:")
+print(bias_corrected_CI)
+
+#h
+plot(S_head)
+lines(bias_corrected_CI[1, ], lwd = 3, col = "blue")
+lines(bias_corrected_CI[2, ], lwd = 3, col = "red")
+
+print(t(bias_corrected_CI))
+
