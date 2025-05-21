@@ -1,0 +1,847 @@
+#part I
+#1
+set.seed(113225001)
+p <- c(1/4, 1/2, 1/4)
+cnt <- c(141, 291, 132)
+n = 564
+#a
+theoretical_cnt <- c(n*.25, n*.5, n*.25)
+t = sum((cnt-theoretical_cnt)^2/theoretical_cnt)
+cat("p-value is:", pchisq(t, 2, lower.tail = FALSE))
+
+
+#b
+set.seed(113225001)
+t = sum((cnt-theoretical_cnt)^2/theoretical_cnt)
+K = 2000
+I = 0
+for(i in 1:K){
+  T_ = sum((rmultinom(1, n, prob = p)-564*p)^2/(564*p))
+  if(T_ >= t){I = I+1}
+}
+cat("p-value is:", I/K)
+#not reject h0
+
+
+#5
+#rate = 1/50
+set.seed(113225001)
+x <- c(86, 133, 75, 22, 11, 144, 78, 122, 8, 146, 33, 41, 99)
+x = sort(x)
+cdf_empirical <- 1/13*seq(1, 13, 1)
+cdf_theoretical <- pexp(x, rate = 1/50)
+d_queue = c()
+for(i in 1:13){
+  if(i == 1){
+    d_queue <- c(d_queue, cdf_empirical[i]-cdf_theoretical[i])
+    next
+  }
+  d_queue <- c(d_queue, cdf_empirical[i]-cdf_theoretical[i])
+  d_queue <- c(d_queue, cdf_theoretical[i]-cdf_empirical[i-1])
+}
+d = max(d_queue)
+print(d)
+K = 1000
+I = 0
+for(i in 1:K){
+  u = runif(13)
+  u = sort(u)
+  d_queue_test <- c()
+  for(i in 1:13){
+    if(i == 1){
+      d_queue_test <- c(d_queue_test, cdf_empirical[i] - u[i])
+      next
+    }
+    d_queue_test <- c(d_queue_test, cdf_empirical[i] - u[i])
+    d_queue_test <- c(d_queue_test, u[i]-cdf_empirical[i-1])
+  }
+  D = max(d_queue_test)
+  if(D>d){I = I+1}
+}
+
+cat("p-value is:", I/K)
+#reject h0
+
+#6
+#MLE
+set.seed(113225001)
+x<-c(6, 7, 3, 4, 7, 3, 7, 2, 6, 3, 7, 8, 2, 1, 3, 5, 8, 7)
+Nj <- c(length(x[x==0]), length(x[x==1]), length(x[x==2]), length(x[x==3]), length(x[x==4]), length(x[x==5]), length(x[x==6]), length(x[x==7]), length(x[x==8]))
+mle_p <- mean(x)/8
+p_hat <- dbinom(seq(0, 8, 1), 8, mle_p)
+t = sum((Nj-18*p_hat)^2/(18*p_hat))
+K = 1000
+I = 0
+for(i in 1:K){
+  sample = rbinom(18, 8, mle_p)
+  sample_mle_p = mean(sample)/8
+  Nj_star <- c(length(sample[sample==0]), length(sample[sample==1]), length(sample[sample==2]), length(sample[sample==3]), length(sample[sample==4]), length(sample[sample==5]), length(sample[sample==6]), length(sample[sample==7]), length(sample[sample==8]))
+  p_hat_star <- dbinom(seq(0, 8, 1), 8, mle_p)
+  T_ = sum((Nj_star-18*p_hat_star)^2/(18*p_hat_star))
+  if(T_>=t){I = I+1}
+}
+cat("p-value is:", I/K)
+
+#7
+set.seed(113225001)
+x <- c(122, 133, 106, 128, 135, 126)
+n = 6
+lambda_mle <- 1/mean(x)
+K = 1000
+I = 0
+d_queue = c()
+for(j in 1:n){
+  if(j == 1){
+    d_queue = c(d_queue, j/n-pexp(x[j], rate = lambda_mle))
+  }else{
+    d_queue = c(d_queue, pexp(x[j], rate = lambda_mle)-(j-1)/n, j/n-pexp(x[j], rate = lambda_mle))
+  }
+}
+d = max(d_queue)
+for(i in 1:K){
+  x_tmp <- rexp(n, rate = lambda_mle)
+  x_tmp = sort(x_tmp)
+  d_queue = c()
+  for(j in 1:n){
+    if(j == 1){
+      d_queue = c(d_queue, j/n-pexp(x_tmp[j], rate = lambda_mle))
+    }else{
+      d_queue = c(d_queue, pexp(x_tmp[j], rate = lambda_mle)-(j-1)/n, j/n-pexp(x_tmp[j], rate = lambda_mle))
+    }
+  }
+  D = max(d_queue)
+  if(D>=d){I=I+1}
+}
+cat("p-value is:", I/K)
+#reject h0
+
+#Part II
+#1
+#a
+#n = 10
+set.seed(113225001)
+n = 10
+x = rnorm(n, 0, sqrt(2.19))
+x = sort(x)
+d_queue = c()
+for(i in 1:n){
+  if(i == 1){
+    d_queue = c(d_queue, i/n-pnorm(x[i], 0, sqrt(2.19)))
+  }else{
+    d_queue = c(d_queue, i/n-pnorm(x[i], 0, sqrt(2.19)), pnorm(x[i], 0, sqrt(2.19)) - (i-1)/n)
+  }
+}
+d = max(d_queue)
+K = 1000
+I = 0
+for(i in 1:K){
+  u = runif(n)
+  u = sort(u)
+  d_queue = c()
+  for(j in 1:n){
+    if(j == 1){
+      d_queue = c(d_queue, j/n-u[j])
+    }else{
+      d_queue = c(d_queue, j/n-u[j], u[j]-(j-1)/n)
+    }
+  }
+  D = max(d_queue)
+  if(D>=d){I = I+1}
+}
+cat('p-value is:', I/K)
+#n = 200
+set.seed(113225001)
+n = 200
+x = rnorm(n, 0, sqrt(2.19))
+x = sort(x)
+d_queue = c()
+for(i in 1:n){
+  if(i == 1){
+    d_queue = c(d_queue, i/n-pnorm(x[i], 0, sqrt(2.19)))
+  }else{
+    d_queue = c(d_queue, i/n-pnorm(x[i], 0, sqrt(2.19)), pnorm(x[i], 0, sqrt(2.19)) - (i-1)/n)
+  }
+}
+d = max(d_queue)
+K = 1000
+I = 0
+for(i in 1:K){
+  u = runif(n)
+  u = sort(u)
+  d_queue = c()
+  for(j in 1:n){
+    if(j == 1){
+      d_queue = c(d_queue, j/n-u[j])
+    }else{
+      d_queue = c(d_queue, j/n-u[j], u[j]-(j-1)/n)
+    }
+  }
+  D = max(d_queue)
+  if(D>=d){I = I+1}
+}
+cat('p-value is:', I/K)
+
+#b
+#n = 10
+set.seed(113225001)
+n = 10
+x = rnorm(n, 0, sqrt(2.19))
+x = sort(x)
+d_queue = c()
+for(i in 1:n){
+  if(i == 1){
+    d_queue = c(d_queue, i/n-pcauchy(x[i]))
+  }else{
+    d_queue = c(d_queue, i/n-pcauchy(x[i]), pcauchy(x[i]) - (i-1)/n)
+  }
+}
+d = max(d_queue)
+K = 1000
+I = 0
+for(i in 1:K){
+  u = runif(n)
+  u = sort(u)
+  d_queue = c()
+  for(j in 1:n){
+    if(j == 1){
+      d_queue = c(d_queue, j/n-u[j])
+    }else{
+      d_queue = c(d_queue, j/n-u[j], u[j]-(j-1)/n)
+    }
+  }
+  D = max(d_queue)
+  if(D>=d){I = I+1}
+}
+cat('p-value is:', I/K)
+
+#n = 200
+set.seed(113225001)
+n = 200
+x = rnorm(n, 0, sqrt(2.19))
+x = sort(x)
+d_queue = c()
+for(i in 1:n){
+  if(i == 1){
+    d_queue = c(d_queue, i/n-pcauchy(x[i]))
+  }else{
+    d_queue = c(d_queue, i/n-pcauchy(x[i]), pcauchy(x[i]) - (i-1)/n)
+  }
+}
+d = max(d_queue)
+K = 1000
+I = 0
+for(i in 1:K){
+  u = runif(n)
+  u = sort(u)
+  d_queue = c()
+  for(j in 1:n){
+    if(j == 1){
+      d_queue = c(d_queue, j/n-u[j])
+    }else{
+      d_queue = c(d_queue, j/n-u[j], u[j]-(j-1)/n)
+    }
+  }
+  D = max(d_queue)
+  if(D>=d){I = I+1}
+}
+cat('p-value is:', I/K)
+
+#c
+#normal
+n = 10
+set.seed(113225001)
+x = rnorm(n, 0, sqrt(2.19))
+x = sort(x)
+ks.test(x, "pnorm", 0, sqrt(2.19))
+
+n = 200
+set.seed(113225001)
+x = rnorm(n, 0, sqrt(2.19))
+x = sort(x)
+ks.test(x, "pnorm", 0, sqrt(2.19))
+
+#cauchy
+n = 10
+set.seed(113225001)
+x = rnorm(n, 0, sqrt(2.19))
+x = sort(x)
+ks.test(x, "pcauchy")
+
+n = 200
+set.seed(113225001)
+x = rnorm(n, 0, sqrt(2.19))
+x = sort(x)
+ks.test(x, "pcauchy")
+
+#2
+#a
+#n = 10
+set.seed(113225001)
+n = 10
+x = rcauchy(n)
+x = sort(x)
+d_queue = c()
+for(i in 1:n){
+  if(i == 1){
+    d_queue = c(d_queue, i/n-pnorm(x[i], 0, sqrt(2.19)))
+  }else{
+    d_queue = c(d_queue, i/n-pnorm(x[i], 0, sqrt(2.19)), pnorm(x[i], 0, sqrt(2.19)) - (i-1)/n)
+  }
+}
+d = max(d_queue)
+K = 1000
+I = 0
+for(i in 1:K){
+  u = runif(n)
+  u = sort(u)
+  d_queue = c()
+  for(j in 1:n){
+    if(j == 1){
+      d_queue = c(d_queue, j/n-u[j])
+    }else{
+      d_queue = c(d_queue, j/n-u[j], u[j]-(j-1)/n)
+    }
+  }
+  D = max(d_queue)
+  if(D>=d){I = I+1}
+}
+cat('p-value is:', I/K)
+
+#n = 200
+set.seed(113225001)
+n = 200
+x = rcauchy(n)
+x = sort(x)
+d_queue = c()
+for(i in 1:n){
+  if(i == 1){
+    d_queue = c(d_queue, i/n-pnorm(x[i], 0, sqrt(2.19)))
+  }else{
+    d_queue = c(d_queue, i/n-pnorm(x[i], 0, sqrt(2.19)), pnorm(x[i], 0, sqrt(2.19)) - (i-1)/n)
+  }
+}
+d = max(d_queue)
+K = 1000
+I = 0
+for(i in 1:K){
+  u = runif(n)
+  u = sort(u)
+  d_queue = c()
+  for(j in 1:n){
+    if(j == 1){
+      d_queue = c(d_queue, j/n-u[j])
+    }else{
+      d_queue = c(d_queue, j/n-u[j], u[j]-(j-1)/n)
+    }
+  }
+  D = max(d_queue)
+  if(D>=d){I = I+1}
+}
+cat('p-value is:', I/K)
+
+#b
+#n = 10
+set.seed(113225001)
+n = 10
+x = rcauchy(n)
+x = sort(x)
+d_queue = c()
+for(i in 1:n){
+  if(i == 1){
+    d_queue = c(d_queue, i/n-pcauchy(x[i]))
+  }else{
+    d_queue = c(d_queue, i/n-pcauchy(x[i]), pcauchy(x[i]) - (i-1)/n)
+  }
+}
+d = max(d_queue)
+K = 1000
+I = 0
+for(i in 1:K){
+  u = runif(n)
+  u = sort(u)
+  d_queue = c()
+  for(j in 1:n){
+    if(j == 1){
+      d_queue = c(d_queue, j/n-u[j])
+    }else{
+      d_queue = c(d_queue, j/n-u[j], u[j]-(j-1)/n)
+    }
+  }
+  D = max(d_queue)
+  if(D>=d){I = I+1}
+}
+cat('p-value is:', I/K)
+
+#n = 200
+set.seed(113225001)
+n = 200
+x = rcauchy(n)
+x = sort(x)
+d_queue = c()
+for(i in 1:n){
+  if(i == 1){
+    d_queue = c(d_queue, i/n-pcauchy(x[i]))
+  }else{
+    d_queue = c(d_queue, i/n-pcauchy(x[i]), pcauchy(x[i]) - (i-1)/n)
+  }
+}
+d = max(d_queue)
+K = 1000
+I = 0
+for(i in 1:K){
+  u = runif(n)
+  u = sort(u)
+  d_queue = c()
+  for(j in 1:n){
+    if(j == 1){
+      d_queue = c(d_queue, j/n-u[j])
+    }else{
+      d_queue = c(d_queue, j/n-u[j], u[j]-(j-1)/n)
+    }
+  }
+  D = max(d_queue)
+  if(D>=d){I = I+1}
+}
+cat('p-value is:', I/K)
+#c
+#normal
+set.seed(113225001)
+n = 10
+x = rcauchy(n)
+x = sort(x)
+ks.test(x, "pnorm", 0, sqrt(2.19))
+
+set.seed(113225001)
+n = 200
+x = rcauchy(n)
+x = sort(x)
+ks.test(x, "pnorm", 0, sqrt(2.19))
+
+#cauchy
+set.seed(113225001)
+n = 10
+x = rcauchy(n)
+x = sort(x)
+ks.test(x, "pcauchy")
+
+set.seed(113225001)
+n = 200
+x = rcauchy(n)
+x = sort(x)
+ks.test(x, "pcauchy")
+
+#3
+#a
+#n = 10
+set.seed(113225001)
+
+n = 10
+x = rnorm(n, , sqrt(2.19))
+
+mle_u = mean(x)
+mle_sigma = sqrt(sum((x-mean(x))^2)/n)
+
+x = sort(x)
+d_queue = c()
+for(i in 1:n){
+  if(i == 1){
+    d_queue = c(d_queue, i/n-pnorm(x[i], mle_u, mle_sigma))
+  }else{
+    d_queue = c(d_queue, i/n-pnorm(x[i], mle_u, mle_sigma), pnorm(x[i], mle_u, mle_sigma)-(i-1)/n)
+  }
+}
+d = max(d_queue)
+
+K = 1000
+I = 0
+for(i in 1:K){
+  x_tmp = rnorm(n, mle_u, mle_sigma)
+  tmp_u = mean(x_tmp)
+  tmp_sigma = sqrt(sum((x_tmp-mean(x_tmp))^2)/n)
+  d_queue = c()
+  for(j in 1:n){
+    if(j == 1){
+      d_queue = c(d_queue, j/n-pnorm(x_tmp[j], tmp_u, tmp_sigma))
+    }else{
+      d_queue = c(d_queue, j/n-pnorm(x_tmp[j], tmp_u, tmp_sigma), pnorm(x_tmp[j], tmp_u, tmp_sigma)-(j-1)/n)
+    }
+  }
+  D = max(d_queue)
+  if(D>=d){I = I+1}
+}
+cat("p-value is:", I/K)
+
+#n = 200
+set.seed(113225001)
+
+n = 200
+x = rnorm(n, , sqrt(2.19))
+
+mle_u = mean(x)
+mle_sigma = sqrt(sum((x-mean(x))^2)/n)
+
+x = sort(x)
+d_queue = c()
+for(i in 1:n){
+  if(i == 1){
+    d_queue = c(d_queue, i/n-pnorm(x[i], mle_u, mle_sigma))
+  }else{
+    d_queue = c(d_queue, i/n-pnorm(x[i], mle_u, mle_sigma), pnorm(x[i], mle_u, mle_sigma)-(i-1)/n)
+  }
+}
+d = max(d_queue)
+
+K = 1000
+I = 0
+for(i in 1:K){
+  x_tmp = rnorm(n, mle_u, mle_sigma)
+  tmp_u = mean(x_tmp)
+  tmp_sigma = sqrt(sum((x_tmp-mean(x_tmp))^2)/n)
+  d_queue = c()
+  for(j in 1:n){
+    if(j == 1){
+      d_queue = c(d_queue, j/n-pnorm(x_tmp[j], tmp_u, tmp_sigma))
+    }else{
+      d_queue = c(d_queue, j/n-pnorm(x_tmp[j], tmp_u, tmp_sigma), pnorm(x_tmp[j], tmp_u, tmp_sigma)-(j-1)/n)
+    }
+  }
+  D = max(d_queue)
+  if(D>=d){I = I+1}
+}
+cat("p-value is:", I/K)
+
+#b
+#n = 10
+set.seed(113225001)
+n = 10
+x = rnorm(n, , sqrt(2.19))
+ks.test(x, "pnorm", mean(x), sqrt(sum((x-mean(x))^2)/n))
+
+#n = 200
+set.seed(113225001)
+n = 200
+x = rnorm(n, , sqrt(2.19))
+ks.test(x, "pnorm", mean(x), sqrt(sum((x-mean(x))^2)/n))
+
+#4
+#i, BIN(10, 0.2)
+#a
+set.seed(113225001)
+n = 10
+p = 0.2
+x = rbinom(500, n, p)
+
+theoretical_cnt = 500*dbinom(0:10, n, p)
+cnt = table(factor(x, levels = 0:10))
+t = sum((cnt-theoretical_cnt)^2/theoretical_cnt)
+K = 2000
+I = 0
+for(i in 1:K){
+  x_tmp = rbinom(500, n, p)
+  tmp_cnt = table(factor(x_tmp, levels = 0:10))
+  tmp_t = sum((tmp_cnt-theoretical_cnt)^2/theoretical_cnt)
+  if(tmp_t > t){I = I+1}
+}
+cat("p-value is:", I/K)
+
+#b
+chisqtest_result <- chisq.test(cnt, dbinom(0:10, size = 10, prob = 0.2))
+print(chisqtest_result)
+
+#ii, BIN(30, 0.5)
+#a
+set.seed(113225001)
+n = 30
+p = 0.5
+x = rbinom(500, n, p)
+
+theoretical_cnt = 500*dbinom(0:30, n, p)
+cnt = table(factor(x, levels = 0:30))
+t = sum((cnt-theoretical_cnt)^2/theoretical_cnt)
+K = 2000
+I = 0
+for(i in 1:K){
+  x_tmp = rbinom(500, n, p)
+  tmp_cnt = table(factor(x_tmp, levels = 0:30))
+  tmp_t = sum((tmp_cnt-theoretical_cnt)^2/theoretical_cnt)
+  if(tmp_t > t){I = I+1}
+}
+cat("p-value is:", I/K)
+
+#b
+chisqtest_result <- chisq.test(cnt, dbinom(0:30, size = 30, prob = 0.5))
+print(chisqtest_result)
+
+
+
+#iii, Poisson(10.5)
+#a
+set.seed(113225001)
+x = rpois(500, 10.5)
+x_cut = ifelse(x <= 20, as.character(x), "21+")
+cnt = table(factor(x_cut, levels = c(as.character(0:20), "21+")))
+p = c(dpois(0:20, 10.5), 1-ppois(20, 10.5))
+theoretical_cnt = 500*p
+t = sum((cnt-theoretical_cnt)^2/theoretical_cnt)
+K = 2000
+I = 0
+for(i in 1:K){
+  x_tmp = rpois(500, 10.5)
+  tmp_cut = ifelse(x_tmp <= 20, as.character(x_tmp), "21+")
+  tmp_cnt = table(factor(tmp_cut, levels = c(as.character(0:20), "21+")))
+  tmp_t = sum((tmp_cnt-theoretical_cnt)^2/theoretical_cnt)
+  if(tmp_t >= t){I=I+1}
+}
+cat('p-value is:', I/K)
+#b
+chisqtest_result <- chisq.test(cnt, p)
+print(chisqtest_result)
+
+#iv, Poisson(2)
+#a
+set.seed(113225001)
+x = rpois(500, 2)
+x_cut = ifelse(x <= 7, as.character(x), "7+")
+cnt = table(factor(x_cut, levels = c(as.character(0:7), "7+")))
+p = c(dpois(0:7, 2), 1-ppois(7, 2))
+theoretical_cnt = 500*p
+t = sum((cnt-theoretical_cnt)^2/theoretical_cnt)
+K = 2000
+I = 0
+for(i in 1:K){
+  x_tmp = rpois(500, 2)
+  tmp_cut = ifelse(x_tmp <= 7, as.character(x_tmp), "7+")
+  tmp_cnt = table(factor(tmp_cut, levels = c(as.character(0:7), "7+")))
+  tmp_t = sum((tmp_cnt-theoretical_cnt)^2/theoretical_cnt)
+  if(tmp_t >= t){I=I+1}
+}
+cat('p-value is:', I/K)
+
+#b
+chisqtest_result <- chisq.test(cnt, p)
+print(chisqtest_result)
+
+#v, Geometric(0.2)
+#a
+set.seed(113225001)
+x = rgeom(500, 0.2)
+x_cut = ifelse(x <= 20, as.character(x), "21+")
+cnt = table(factor(x_cut, levels = c(as.character(0:20), "21+")))
+p = c(dgeom(0:20, 0.2), 1-pgeom(20, 0.2))
+theoretical_cnt = 500*p
+t = sum((cnt-theoretical_cnt)^2/theoretical_cnt)
+K = 2000
+I = 0
+for(i in 1:K){
+  x_tmp = rgeom(500, 0.2)
+  tmp_cut = ifelse(x_tmp <= 20, as.character(x_tmp), "21+")
+  tmp_cnt = table(factor(tmp_cut, levels = c(as.character(0:20), "21+")))
+  tmp_t = sum((tmp_cnt-theoretical_cnt)^2/theoretical_cnt)
+  if(tmp_t >= t){I = I+1}
+}
+cat('p-value is:', I/K)
+
+#b
+chisqtest_result <- chisq.test(cnt, p)
+print(chisqtest_result)
+
+#vi, NegBin(3, 0.3)
+set.seed(113225001)
+x = rnbinom(500, 3, 0.3)
+x_cut = ifelse(x <= 20, as.character(x), "21+")
+cnt = table(factor(x_cut, levels = c(as.character(0:20), "21+")))
+p = c(dnbinom(0:20, 3, 0.3), 1-pnbinom(20, 3, 0.3))
+theoretical_cnt = 500*p
+t = sum((cnt-theoretical_cnt)^2/theoretical_cnt)
+K = 2000
+I = 0
+for(i in 1:K){
+  x_tmp = rnbinom(500, 3, 0.3)
+  tmp_cut = ifelse(x_tmp <= 20, as.character(x_tmp), "21+")
+  tmp_cnt = table(factor(tmp_cut, levels = c(as.character(0:20), "21+")))
+  tmp_t = sum((tmp_cnt-theoretical_cnt)^2/theoretical_cnt)
+  if(tmp_t >= t){I = I+1}
+}
+cat('p-value is:', I/K)
+
+#b
+chisqtest_result <- chisq.test(cnt, p)
+print(chisqtest_result)
+
+#5
+#i, N(-5, 36)
+#a
+set.seed(113225001)
+x = rnorm(200, -5, 6)
+x = sort(x)
+d_queue = c()
+for(i in 1:200){
+  if(i == 1){
+    d_queue = c(d_queue, i/n-pnorm(x[i], -5, 6))
+  }else{
+    d_queue = c(d_queue, i/n-pnorm(x[i], -5, 6), pnorm(x[i], -5, 6)-(i-1)/n)
+  }
+}
+d = max(d_queue)
+K = 2000
+I = 0
+for(i in 1:K){
+  u_tmp = runif(200)
+  u_tmp = sort(u_tmp)
+  d_queue = c()
+  for(j in 1:200){
+    if(j == 1){
+      d_queue = c(d_queue, j/n - u_tmp[j])
+    }else{
+      d_queue = c(d_queue, j/n - u_tmp[j], u_tmp[j] - (j-1)/n)
+    }
+  }
+  D = max(d_queue)
+  if(D >= d){I = I+1}
+}
+
+cat("p-value is:", I/K)
+
+#b
+ks.test(x, "pnorm", -5, 6, simulate.p.value = T)
+
+#ii, gamma(4/3, 6)
+#a
+set.seed(113225001)
+x = rgamma(200, 4/3, 6)
+x = sort(x)
+d_queue = c()
+for(i in 1:200){
+  if(i == 1){
+    d_queue = c(d_queue, i/n - pgamma(x[i], 4/3, 6))
+  }else{
+    d_queue = c(d_queue, i/n - pgamma(x[i], 4/3, 6), pgamma(x[i], 4/3, 6) - (i-1)/n)
+  }
+}
+d = max(d_queue)
+K = 2000
+I = 0
+for(i in 1:K){
+  u_tmp = runif(200)
+  u_tmp = sort(u_tmp)
+  d_queue = c()
+  for(j in 1:200){
+    if(j == 1){
+      d_queue = c(d_queue, j/n - u_tmp[j])
+    }else{
+      d_queue = c(d_queue, j/n - u_tmp[j], u_tmp[j] - (j-1)/n)
+    }
+  }
+  D = max(d_queue)
+  if(D >= d){I = I+1}
+}
+cat('p-value is:', I/K)
+
+#b
+ks.test(x, "pgamma", 4/3, 6)
+
+#iii, chisq(25)
+#a
+set.seed(113225001)
+x = rchisq(200, 25)
+x = sort(x)
+d_queue = c()
+for(i in 1:200){
+  if(i == 1){
+    d_queue = c(d_queue, i/n - pchisq(x[i], 25))
+  }else{
+    d_queue = c(d_queue, i/n - pchisq(x[i], 25), pchisq(x[i], 25) - (i-1)/n)
+  }
+}
+
+d = max(d_queue)
+K = 2000
+I = 0
+for(i in 1:K){
+  u_tmp = runif(200)
+  u_tmp = sort(u_tmp)
+  d_queue = c()
+  for(j in 1:200){
+    if(j == 1){
+      d_queue = c(d_queue, j/n - u_tmp[j])
+    }else{
+      d_queue = c(d_queue, j/n - u_tmp[j], u_tmp[j] - (j-1)/n)
+    }
+  }
+  D = max(d_queue)
+  if(D >= d){I = I+1}
+}
+cat('p-value is:', I/K)
+#b
+ks.test(x, 'pchisq', 25)
+
+#iv, Beta(2, 1/2)
+set.seed(113225001)
+x = rbeta(200, 2, 1/2)
+x = sort(x)
+d_queue = c()
+for(i in 1:200){
+  if(i == 1){
+    d_queue = c(d_queue, i/n - pbeta(x[i], 2, 1/2))
+  }else{
+    d_queue = c(d_queue, i/n - pbeta(x[i], 2, 1/2), pbeta(x[i], 2, 1/2) - (i-1)/n)
+  }
+}
+d = max(d_queue)
+K = 2000
+I = 0
+for(i in 1:K){
+  u_tmp = runif(200)
+  u_tmp = sort(u_tmp)
+  d_queue = c()
+  for(j in 1:200){
+    if(j == 1){
+      d_queue = c(d_queue, j/n - u_tmp[j])
+    }else{
+      d_queue = c(d_queue, j/n - u_tmp[j], u_tmp[j] - (j-1)/n)
+    }
+  }
+  D = max(d_queue)
+  if(D >= d){I = I+1}
+}
+cat('p-value is:', I/K)
+#seed problem, better result when seed is 113225002
+
+#b
+ks.test(x, "pbeta", 2, 1/2)
+
+#v, Cauchy(-5, 25)
+set.seed(113225001)
+x = rcauchy(200, -5, 25)
+x = sort(x)
+d_queue = c()
+for(i in 1:200){
+  if(i == 1){
+    d_queue = c(d_queue, i/n - pcauchy(x[i], -5, 25))
+  }else{
+    d_queue = c(d_queue, i/n - pcauchy(x[i], -5, 25), pcauchy(x[i], -5, 25) - (i-1)/n)
+  }
+}
+d = max(d_queue)
+K = 2000
+I = 0
+
+for(i in 1:K){
+  u_tmp = runif(200)
+  u_tmp = sort(u_tmp)
+  d_queue = c()
+  for(j in 1:200){
+    if(j == 1){
+      d_queue = c(d_queue, j/n - u_tmp[j])
+    }else{
+      d_queue = c(d_queue, j/n - u_tmp[j], u_tmp[j] - (j-1)/n)
+    }
+  }
+  D = max(d_queue)
+  if(D >= d){I = I+1}
+}
+
+cat("p-value is:", I/K)
+
+#b
+ks.test(x, "pcauchy", -5, 25)
