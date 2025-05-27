@@ -1,0 +1,226 @@
+#1
+set.seed(113225001)
+u = runif(1000)
+estimator = exp(u^2)*(1+exp(1-2*u))/2
+u1 = runif(1000)
+u2 = runif(1000)
+estimator2 = (exp(u1^2)+exp(u2^2))/2
+#2
+#simulation
+set.seed(113225001)
+d = c()
+for(i in 1:10000){
+  u1 = runif(1)
+  u2 = runif(1)
+  d = c(d,.5*(exp((u1+(u2))^2)+exp(((1-u1)+(1-u2))^2)))
+}
+mean(d)
+var(d)
+
+set.seed(113225001)
+d = c()
+for(i in 1:10000){
+  u1 = runif(1)
+  u2 = runif(1)
+  d = c(d,exp((u1+(u2))^2))
+}
+mean(d)
+var(d)
+
+#both method's time is equal, because AV's variance is smaller than generating a new pair of random number method's , so AV is more efficient
+
+#12
+#theta = E(exp(x^2)), x~U(0, 1)
+#define Y = U
+
+#b
+set.seed(113225001)
+n = 100
+x = runif(100)
+y = runif(100)
+
+c_star = -cov(exp(x^2), y)/var(y)
+estimator_cv = x^2+c_star*(y-1/2)
+c_star
+var(estimator_cv)
+
+#c
+set.seed(113225001)
+n = 100
+x = runif(100)
+
+estimator_av = exp(x^2)*(1+exp(1-2*x))/2
+var(estimator_av)
+
+#d
+#AV is better due to av's lower variance
+
+#15
+set.seed(113225001)
+n = 1000
+u = runif(n)
+y = sqrt(1-u^2)
+x_1 = u
+x_2 = u^2
+
+rho_1_square = cor(y, x_1)^2
+rho_2_square = cor(y, x_2)^2
+
+cat("variance reduction by u:", rho_1_square)
+cat("variance reduction by u^2:", rho_2_square)
+
+#u^2 reduce more variance
+
+#17
+#a
+set.seed(113225001)
+n = 1000
+t = 2
+x = rexp(n, 1)
+y = rexp(n, 1)
+I = 0
+for(i in 1:n){
+  if(x[i]+y[i]<=t){
+    I = I+1
+  }
+}
+cat("raw simulation appraoch to estimating theta:", I/n)
+
+#b
+set.seed(113225001)
+n = 1000
+t = 2
+x = rexp(n, 1)
+prob = ifelse(t-x >= 0, 1-exp(-(t-x)), 0)
+cat("condition method estimating theta:", mean(prob))
+
+#c
+set.seed(113225001)
+n = 1000
+t = 2
+x = rexp(n, 1)
+prob_b = ifelse(t-x >= 0, 1-exp(-(t-x)), 0)
+theta_b = mean(prob_b)
+variance_b = var(prob_b)
+
+y = x
+mu_y = 1
+c_star = cov(prob_b, y)/var(y)
+
+theta_c = mean(prob_b) - c_star*(mean(y) - mu_y)
+variance_c = var(prob_b - c_star*(y - mu_y))
+
+cat("condition method estimating theta:", theta_b)
+cat("conditioh method estimating theta's variance:", variance_b)
+
+cat("control variate method estimating theta:", theta_c)
+cat("control variate method estimating theta's variance:", variance_c)
+
+#part II
+#1
+#x = 1.645
+set.seed(113225001)
+n = 1000
+x = rnorm(n)
+p = c()
+
+for(i in 1:n){
+  if(x[i]<=1.645){
+    p = c(p, 1)
+  }else{
+    p = c(p, 0)
+  }
+}
+cat("x = 1.645 by SM:", mean(p))
+
+set.seed(113225001)
+c = 1.645
+n = 1000
+x = rnorm(n)
+x_av = c()
+for(i in 1:n){
+  if(x[i]<=c && -x[i] <= c){
+    x_av = c(x_av, 1)
+  }else if(x[i]>c && -x[i]>c){
+    x_av = c(x_av, 0)
+  }else{
+    x_av = c(x_av, .5)
+  }
+}
+cat("x = 1.645 by AV:", mean(x_av))
+
+cat("x = 1.645's percent reduction in variance:", (var(p)-var(x_av))/var(p))
+
+#x = 1.96
+set.seed(113225001)
+p = c()
+for(i in 1:n){
+  if(x[i]<=1.96){
+    p = c(p, 1)
+  }else{
+    p = c(p, 0)
+  }
+}
+cat("x = 1.96 by SM:", mean(p))
+
+set.seed(113225001)
+c = 1.96
+n = 1000
+x = rnorm(n)
+x_av = c()
+for(i in 1:n){
+  if(x[i]<=c && -x[i] <= c){
+    x_av = c(x_av, 1)
+  }else if(x[i]>c && -x[i]>c){
+    x_av = c(x_av, 0)
+  }else{
+    x_av = c(x_av, .5)
+  }
+}
+cat("x = 1.96 by AV:", mean(x_av))
+
+cat("x = 1.96's percent reduction in variance:", (var(p)-var(x_av))/var(p))
+
+
+#x = 2.33
+set.seed(113225001)
+p = c()
+for(i in 1:n){
+  if(x[i]<=2.33){
+    p = c(p, 1)
+  }else{
+    p = c(p, 0)
+  }
+}
+cat("x = 2.33 by SM:", mean(p))
+
+set.seed(113225001)
+c = 2.33
+n = 1000
+x = rnorm(n)
+x_av = c()
+for(i in 1:n){
+  if(x[i]<=c && -x[i] <= c){
+    x_av = c(x_av, 1)
+  }else if(x[i]>c && -x[i]>c){
+    x_av = c(x_av, 0)
+  }else{
+    x_av = c(x_av, .5)
+  }
+}
+cat("x = 2.33 by AV:", mean(x_av))
+
+cat("x = 2.33's percent reduction in variance:", (var(p)-var(x_av))/var(p))
+
+
+
+
+
+
+
+
+
+
+
+
+
